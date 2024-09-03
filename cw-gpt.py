@@ -5,19 +5,46 @@ import requests
 import io
 import soundfile as sf
 import os
-from streamlit.runtime import get_instance
-from streamlit.runtime.scriptrunner import get_script_run_ctx
-
-def _get_session():
-    runtime = get_instance()
-    session_id = get_script_run_ctx().session_id
-    session_info = runtime._session_mgr.get_session_info(session_id)
-    if session_info is None:
-        return "default"
-    return getattr(session_info.client, 'request').remote_ip
+import extra_streamlit_components as stx
+import uuid
+from urllib.parse import unquote
 
 st.set_page_config(layout="wide")
-st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ _get_session())
+
+# @st.cache_resource
+# def get_manager():
+#     return stx.CookieManager()
+# cookie_manager = get_manager()
+# if cookie_manager.get(cookie="userid") is None:
+#     cookie_manager.set("userid", uuid.uuid4().hex)
+
+def get_all_cookies():
+    headers = st.context.headers
+    if headers is None:
+        return {}
+    
+    if 'Cookie' not in headers:
+        return {}
+    
+    cookie_string = headers['Cookie']
+    cookie_kv_pairs = cookie_string.split(';')
+
+    cookie_dict = {}
+    for kv in cookie_kv_pairs:
+        k_and_v = kv.split('=')
+        k = k_and_v[0].strip()
+        v = k_and_v[1].strip()
+        cookie_dict[k] = unquote(v)
+    return cookie_dict
+
+cookie = "default"
+if 'userid' in get_all_cookies():
+    cookie = get_all_cookies()['userid']
+else:
+    cookie = uuid.uuid4().hex
+    stx.CookieManager().set("userid", cookie)
+
+st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ cookie)
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
