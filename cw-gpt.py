@@ -5,46 +5,43 @@ import requests
 import io
 import soundfile as sf
 import os
-import extra_streamlit_components as stx
 import uuid
-from urllib.parse import unquote
+from streamlit_cookies_manager import CookieManager
+from datetime import datetime, timedelta
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 
-# @st.cache_resource
-# def get_manager():
-#     return stx.CookieManager()
-# cookie_manager = get_manager()
-# if cookie_manager.get(cookie="userid") is None:
-#     cookie_manager.set("userid", uuid.uuid4().hex)
+cookie_name = "my_cookie_name"
+content = uuid.uuid4().hex
 
-def get_all_cookies():
-    headers = st.context.headers
-    if headers is None:
-        return {}
-    
-    if 'Cookie' not in headers:
-        return {}
-    
-    cookie_string = headers['Cookie']
-    cookie_kv_pairs = cookie_string.split(';')
+class NEW_CM:
+    def __init__(self) -> None:
+        self.cookie_manager = CookieManager()
+        self.cookie_manager._default_expiry = datetime.now() + timedelta(minutes=1)
 
-    cookie_dict = {}
-    for kv in cookie_kv_pairs:
-        k_and_v = kv.split('=')
-        k = k_and_v[0].strip()
-        v = k_and_v[1].strip()
-        cookie_dict[k] = unquote(v)
-    return cookie_dict
+        if not self.cookie_manager.ready():
+            st.stop()
 
-cookie = "default"
-if 'userid' in get_all_cookies():
-    cookie = get_all_cookies()['userid']
-else:
-    cookie = uuid.uuid4().hex
-    stx.CookieManager().set("userid", cookie)
+    def set_cookie(self):
+        self.cookie_manager[cookie_name] = content
+        self.cookie_manager.save()
 
-st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ cookie)
+    def get_cookie(self):
+        value = self.cookie_manager.get(cookie_name)
+        # st.write(f"{cookie_name}: {value}")
+        return value
+
+    def delete_cookie(self):
+        value = None
+        if cookie_name in self.cookie_manager:
+            value = self.cookie_manager.pop(cookie_name)
+        # st.write(f"del: {value}")
+        return value
+
+cookie_manager = NEW_CM()
+if cookie_manager.get_cookie() is None: cookie_manager.set_cookie()
+
+st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ cookie_manager.get_cookie())
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
