@@ -13,7 +13,6 @@ import extra_streamlit_components as stx
 cookie_name = "my_cookie_name"
 content = uuid.uuid4().hex
 
-@st.cache_resource
 def get_manager():
     return stx.CookieManager()
 cookie_manager = get_manager()
