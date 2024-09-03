@@ -8,7 +8,7 @@ import os
 import uuid
 import extra_streamlit_components as stx
 
-# st.set_page_config(layout="wide")
+st.set_page_config(layout="wide")
 
 cookie_name = "my_cookie_name"
 content = uuid.uuid4().hex
