@@ -38,10 +38,13 @@ class NEW_CM:
         # st.write(f"del: {value}")
         return value
 
-cookie_manager = NEW_CM()
-if cookie_manager.get_cookie() is None: cookie_manager.set_cookie()
+@st.cache_resource
+def get_cookie_manager():
+    cookie_manager = NEW_CM()
+    return cookie_manager
+if get_cookie_manager().get_cookie() is None: get_cookie_manager().set_cookie()
 
-st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ cookie_manager.get_cookie())
+st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ get_cookie_manager().get_cookie())
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
