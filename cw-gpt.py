@@ -6,45 +6,21 @@ import io
 import soundfile as sf
 import os
 import uuid
-from streamlit_cookies_manager import CookieManager
-from datetime import datetime, timedelta
+import extra_streamlit_components as stx
 
 # st.set_page_config(layout="wide")
 
 cookie_name = "my_cookie_name"
 content = uuid.uuid4().hex
 
-class NEW_CM:
-    def __init__(self) -> None:
-        self.cookie_manager = CookieManager()
-        self.cookie_manager._default_expiry = datetime.now() + timedelta(minutes=1)
-
-        if not self.cookie_manager.ready():
-            st.stop()
-
-    def set_cookie(self):
-        self.cookie_manager[cookie_name] = content
-        self.cookie_manager.save()
-
-    def get_cookie(self):
-        value = self.cookie_manager.get(cookie_name)
-        # st.write(f"{cookie_name}: {value}")
-        return value
-
-    def delete_cookie(self):
-        value = None
-        if cookie_name in self.cookie_manager:
-            value = self.cookie_manager.pop(cookie_name)
-        # st.write(f"del: {value}")
-        return value
-
 @st.cache_resource
-def get_cookie_manager():
-    cookie_manager = NEW_CM()
-    return cookie_manager
-if get_cookie_manager().get_cookie() is None: get_cookie_manager().set_cookie()
+def get_manager():
+    return stx.CookieManager()
+cookie_manager = get_manager()
 
-st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ get_cookie_manager().get_cookie())
+if cookie_manager.get(cookie=cookie_name) is None: cookie_manager.set(cookie_name, content)
+
+st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ cookie_manager.get(cookie=cookie_name))
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []

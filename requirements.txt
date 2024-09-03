@@ -2,4 +2,4 @@ streamlit_chat
 pillow==10.3.0
 requests==2.31.0
 soundfile==0.12.1
-streamlit_cookies_manager==0.2.0
+extra_streamlit_components
