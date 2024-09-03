@@ -14,7 +14,7 @@ def _get_session():
     session_info = runtime._session_mgr.get_session_info(session_id)
     if session_info is None:
         return "default"
-    return session_info.session
+    return getattr(session_info.client, 'request').remote_ip
 
 st.set_page_config(layout="wide")
 st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ _get_session())
