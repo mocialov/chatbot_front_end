@@ -5,9 +5,19 @@ import requests
 import io
 import soundfile as sf
 import os
+from streamlit.runtime import get_instance
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+def get_session():
+    runtime = get_instance()
+    session_id = get_script_run_ctx().session_id
+    session_info = runtime._session_mgr.get_session_info(session_id)
+    if session_info is None:
+        return "default"
+    return session_info.session
 
 st.set_page_config(layout="wide")
-st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot")
+st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ get_session())
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
