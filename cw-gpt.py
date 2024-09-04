@@ -1,8 +1,5 @@
 import streamlit as st
 from streamlit_chat import message
-import streamlit as st
-from streamlit_chat import message
-from PIL import Image
 import requests
 import io
 import soundfile as sf
@@ -12,12 +9,10 @@ import extra_streamlit_components as stx
 
 st.set_page_config(layout="wide")
 
-cookie_name = "my_cookie_name"
+cookie_name = "user_id_cookie"
 content = uuid.uuid4().hex
 
-def get_manager():
-    return stx.CookieManager()
-cookie_manager = get_manager()
+cookie_manager = stx.CookieManager()
 
 if cookie_manager.get(cookie=cookie_name) is None: cookie_manager.set(cookie_name, content)
 
@@ -30,6 +25,8 @@ if 'past' not in st.session_state:
 
 def generate_response(prompt):
     response = requests.post(os.environ["CW_SERVER_STREAMLIT"], json={'event':{'text': prompt}})
+
+    print (response.headers)
 
     audio_data = sf.read(io.BytesIO(response.content))[0]
     text_data = response.headers['Bot-Response-Text']
