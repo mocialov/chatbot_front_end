@@ -25,7 +25,7 @@ if 'past' not in st.session_state:
     st.session_state['past'] = []
 
 def generate_response(prompt):
-    response = requests.post(os.environ["CW_SERVER_STREAMLIT"], json={'event':{'text': prompt}})
+    response = requests.post(os.environ["CW_SERVER_STREAMLIT"], json={'event':{'text': prompt, 'user': cookie_manager.get(cookie=cookie_name)}})
 
     print (response.headers)
 
