@@ -3,3 +3,4 @@ pillow==10.3.0
 requests==2.31.0
 soundfile==0.12.1
 extra_streamlit_components
+shortuuid

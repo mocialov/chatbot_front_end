@@ -6,11 +6,12 @@ import soundfile as sf
 import os
 import uuid
 import extra_streamlit_components as stx
+import shortuuid
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 
 cookie_name = "user_id_cookie"
-content = uuid.uuid4().hex
+content = shortuuid.encode(uuid.uuid4())[:7]
 
 cookie_manager = stx.CookieManager()
 
@@ -46,5 +47,7 @@ if user_input:
 if st.session_state['generated']:
     for i in range(len(st.session_state['generated'])-1, -1, -1):
         st.audio(st.session_state["generated"][i][0], sample_rate=44100)
-        message(st.session_state["generated"][i][1], key=str(i), avatar_style="initials", seed="AI")
-        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="personas", seed=4)
+        with st.chat_message("ai", avatar="🤖"):
+            st.write(st.session_state["generated"][i][1])
+        with st.chat_message("user", avatar="🤔"):
+            st.write(st.session_state['past'][i])
