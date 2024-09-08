@@ -1,0 +1,11 @@
+.highlight {
+    border-radius: 0.4rem;
+    color: white;
+    padding: 0.5rem;
+  }
+  .bold {
+    font-weight: 700;
+  }
+  .red {
+    background-color: lightcoral;
+  }

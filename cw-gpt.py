@@ -7,8 +7,9 @@ import os
 import uuid
 import extra_streamlit_components as stx
 import shortuuid
+from load_css import local_css
 
-# st.set_page_config(layout="wide")
+local_css("style.css")
 
 cookie_name = "user_id_cookie"
 content = shortuuid.encode(uuid.uuid4())[:7]
@@ -17,7 +18,14 @@ cookie_manager = stx.CookieManager()
 
 if cookie_manager.get(cookie=cookie_name) is None: cookie_manager.set(cookie_name, content)
 
-st.title(os.environ["CW_CHATBOT_NAME"]+" ChatBot vs "+ cookie_manager.get(cookie=cookie_name))
+col1, col2 = st.columns([3, 1], vertical_alignment="bottom")
+col1.markdown(f"""
+<h3>{os.environ["CW_CHATBOT_NAME"]} ChatBot vs {cookie_manager.get(cookie=cookie_name)}</h3>
+""", unsafe_allow_html=True)
+if "CW_CHATBOT_MODE" in os.environ and os.environ["CW_CHATBOT_MODE"] != "":
+    col2.markdown(f"""
+    <span class='highlight red'><span class='bold'>{os.environ["CW_CHATBOT_MODE"]}</span> </span>
+    """, unsafe_allow_html=True)
 
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
