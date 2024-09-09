@@ -33,7 +33,7 @@ if 'past' not in st.session_state:
     st.session_state['past'] = []
 
 def generate_response(prompt):
-    response = requests.post(os.environ["CW_SERVER_STREAMLIT"], json={'event':{'text': prompt, 'user': cookie_manager.get(cookie=cookie_name)}})
+    response = requests.post(os.environ["CW_SERVER_STREAMLIT"], json={'event':{'text': prompt, 'user': cookie_manager.get(cookie=cookie_name), 'mode': os.environ["CW_CHATBOT_MODE"]}})
 
     print (response.headers)
 
