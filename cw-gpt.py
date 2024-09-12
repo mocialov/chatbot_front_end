@@ -11,7 +11,7 @@ from load_css import local_css
 
 local_css("style.css")
 
-cookie_name = "user_id_cookie"
+cookie_name = "user_id_cookie2"
 content = shortuuid.encode(uuid.uuid4())[:7]
 
 cookie_manager = stx.CookieManager()
